@@ -297,8 +297,8 @@ def process(args):
     best_dice = 0
 
     if rank == 0:
-        writer = SummaryWriter(log_dir='out/' + args.log_name)
-        print('Writing Tensorboard logs to ', 'out/' + args.log_name)
+        writer = SummaryWriter(log_dir='output/' + args.log_name + '/tblog/')
+        print('Writing Tensorboard logs to ', 'output/' + args.log_name + '/tblog')
 
     while args.epoch < args.max_epoch:
         if args.dist:
@@ -309,6 +309,9 @@ def process(args):
         if rank == 0:
             writer.add_scalar('train_loss', loss, args.epoch)
             writer.add_scalar('lr', scheduler.get_lr(), args.epoch)
+            with open('output/' + args.log_name + '/train_log.log', 'a+') as f:
+                print(f'Epoch [{args.epoch}]: train_loss = {loss}, lr = {scheduler.get_lr()[0]}')
+                print(f'Epoch [{args.epoch}]: train_loss = {loss}, lr = {scheduler.get_lr()[0]}', file=f)
 
         if (args.epoch % args.store_num == 0):
             mean_dice = validation(model, val_loader, args)
@@ -320,9 +323,9 @@ def process(args):
                     'scheduler': scheduler.state_dict(),
                     "epoch": args.epoch
                 }
-                if not os.path.isdir('out/' + args.log_name):
-                    os.mkdir('out/' + args.log_name)
-                torch.save(checkpoint, 'out/' + args.log_name + '/best_model.pth')
+                if not os.path.isdir('output/' + args.log_name):
+                    os.mkdir('output/' + args.log_name)
+                torch.save(checkpoint, 'output/' + args.log_name + '/best_model.pth')
                 print('The best model saved at epoch:', args.epoch)
         
         checkpoint = {
@@ -331,7 +334,7 @@ def process(args):
                 'scheduler': scheduler.state_dict(),
                 "epoch": args.epoch
             }
-        directory = 'out/' + args.log_name
+        directory = 'output/' + args.log_name
         if not os.path.isdir(directory):
             os.mkdir(directory)
         torch.save(checkpoint, directory + '/model.pth')

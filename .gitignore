@@ -1,0 +1,3 @@
+target_applications/totalsegmentator/dataset/TotalSegmentator_dataset
+target_applications/totalsegmentator/pretrained_weights/supervised_suprem_swinunetr_2100.pth
+target_applications/totalsegmentator/output/
